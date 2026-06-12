@@ -1,0 +1,30 @@
+*(بمجرد كتابة العلامات `/` سيقوم موقع GitHub بإنشاء المجلدات الفرعية تلقائياً).*
+
+4. الآن، انسخ الكود التالي بالكامل والصقه داخل الصندوق النصي الكبير المخصص لمحتوى الملف:
+
+```yaml
+name: Build Osiris DLL Online
+
+on:
+  workflow_dispatch: # يتيح لك تشغيل البناء يدوياً بضغطة زر في أي وقت
+
+jobs:
+  build:
+    runs-on: windows-2022 # استخدام خادم ويندوز مجهز مسبقاً بأدوات C++ من مايكروسوفت
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Build Osiris Solution
+      # قمنا بتحديد المنصة x86 والـ Configuration كـ Release لأنها الإعدادات المتوافقة مع اللعبة
+      run: msbuild Osiris.sln /p:Configuration=Release /p:Platform=x86
+
+    - name: Upload Osiris DLL Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Osiris-DLL-Package
+        path: "**/Release/*.dll" # سيبحث عن ملف Osiris.dll ويرفعه لك تلقائياً
